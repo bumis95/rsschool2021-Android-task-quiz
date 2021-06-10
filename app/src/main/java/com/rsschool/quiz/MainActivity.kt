@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                replace(R.id.fragmentContainerView, QuizFragment.newInstance(),"f$fragmentCount")
+                replace(R.id.fragmentContainerView, QuizFragment.newInstance(), "f$fragmentCount")
                 Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
                 addToBackStack("f$fragmentCount")
             }
@@ -23,10 +23,16 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount == 1) {
+        if (fragmentCount == 1) {
             finish()
         } else {
-            super.onBackPressed()
+            fragmentCount--
+            val fragment =
+                supportFragmentManager.findFragmentByTag("f$fragmentCount") as QuizFragment
+            supportFragmentManager.commit {
+                Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
+                replace(R.id.fragmentContainerView, fragment)
+            }
         }
     }
 
