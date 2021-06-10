@@ -1,18 +1,42 @@
 package com.rsschool.quiz
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
+
+    private var fragmentCount = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                replace(R.id.fragmentContainerView, QuestionFragment())
+                replace(R.id.fragmentContainerView, QuizFragment.newInstance(),"f$fragmentCount")
+                Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
+                addToBackStack("f$fragmentCount")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            finish()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun getFragmentCount(): Int = fragmentCount
+
+    override fun incFragmentCount() {
+        fragmentCount++
+    }
+
+    override fun decFragmentCount() {
+        fragmentCount--
     }
 }
