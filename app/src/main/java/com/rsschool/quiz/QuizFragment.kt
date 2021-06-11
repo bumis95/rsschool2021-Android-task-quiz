@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
@@ -113,12 +114,20 @@ class QuizFragment : Fragment() {
                 replace(R.id.fragmentContainerView, fragment)
             }
         } else {
-            listener?.incFragmentCount()
-            val page = listener?.getFragmentCount()
-            requireActivity().supportFragmentManager.commit {
-                Log.d("QUIZ_FRAGMENT", "page=$page")
-                replace(R.id.fragmentContainerView, newInstance(), "f$page")
-                addToBackStack("f$page")
+            if (currentPage == MAX_QUESTIONS) {
+                requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                requireActivity().supportFragmentManager.commit {
+                    replace(R.id.fragmentContainerView, ResultFragment())
+                    addToBackStack("res")
+                }
+            } else {
+                listener?.incFragmentCount()
+                val page = listener?.getFragmentCount()
+                requireActivity().supportFragmentManager.commit {
+                    Log.d("QUIZ_FRAGMENT", "page=$page")
+                    replace(R.id.fragmentContainerView, newInstance(), "f$page")
+                    addToBackStack("f$page")
+                }
             }
         }
     }

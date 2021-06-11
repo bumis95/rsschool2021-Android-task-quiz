@@ -28,10 +28,17 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
         } else {
             fragmentCount--
             val fragment =
-                supportFragmentManager.findFragmentByTag("f$fragmentCount") as QuizFragment
-            supportFragmentManager.commit {
-                Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
-                replace(R.id.fragmentContainerView, fragment)
+                supportFragmentManager.findFragmentByTag("f$fragmentCount")
+            when (fragment) {
+                is QuizFragment -> {
+                    supportFragmentManager.commit {
+                        Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
+                        replace(R.id.fragmentContainerView, fragment)
+                    }
+                }
+                else -> {
+                    finish()
+                }
             }
         }
     }
