@@ -49,6 +49,10 @@ class QuizFragment : Fragment() {
         initQuestion()
         initButtons()
 
+        binding.toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
+
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.nextButton.isEnabled = true
         }
