@@ -20,7 +20,7 @@ class QuizFragment : Fragment() {
     private var param1: String? = null
 
     private var listener: OnQuizFragmentListener? = null
-    private val questions = Questions.questions
+    private lateinit var question: Questions.Question
 
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
@@ -86,13 +86,16 @@ class QuizFragment : Fragment() {
 
     private fun initQuestion() {
         val page = listener?.getFragmentCount()?.dec()
-        binding.question.text = questions[page!!].text
+        if (page != null) {
+            question = Questions.questions[page]
 
-        binding.optionOne.text = questions[page].answers[0]
-        binding.optionTwo.text = questions[page].answers[1]
-        binding.optionThree.text = questions[page].answers[2]
-        binding.optionFour.text = questions[page].answers[3]
-        binding.optionFive.text = questions[page].answers[4]
+            binding.question.text = question.text
+            binding.optionOne.text = question.answers[0]
+            binding.optionTwo.text = question.answers[1]
+            binding.optionThree.text = question.answers[2]
+            binding.optionFour.text = question.answers[3]
+            binding.optionFive.text = question.answers[4]
+        }
     }
 
     private fun initButtons() {
