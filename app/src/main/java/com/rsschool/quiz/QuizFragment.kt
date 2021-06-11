@@ -12,13 +12,14 @@ import androidx.fragment.app.commit
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
 private const val ARG_PARAM1 = "param1"
-private const val MAX_QUESTIONS = 3
+private const val MAX_QUESTIONS = 5
 
 class QuizFragment : Fragment() {
 
     private var param1: String? = null
 
     private var listener: OnQuizFragmentListener? = null
+    private val questions = Questions.questions
 
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
@@ -43,8 +44,10 @@ class QuizFragment : Fragment() {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
 
         Log.d("QUIZ_FRAGMENT", "onCreateView")
-        initButtons()
+
         setToolbarTitle()
+        initQuestion()
+        initButtons()
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.nextButton.isEnabled = true
@@ -74,6 +77,17 @@ class QuizFragment : Fragment() {
     private fun setToolbarTitle() {
         binding.toolbar.title =
             "Question ${listener?.getFragmentCount()}"
+    }
+
+    private fun initQuestion() {
+        val page = listener?.getFragmentCount()?.dec()
+        binding.question.text = questions[page!!].text
+
+        binding.optionOne.text = questions[page].answers[0]
+        binding.optionTwo.text = questions[page].answers[1]
+        binding.optionThree.text = questions[page].answers[2]
+        binding.optionFour.text = questions[page].answers[3]
+        binding.optionFive.text = questions[page].answers[4]
     }
 
     private fun initButtons() {
