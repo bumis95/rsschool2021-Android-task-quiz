@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.rsschool.quiz.databinding.FragmentQuizBinding
 import com.rsschool.quiz.databinding.FragmentResultBinding
 
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class ResultFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var param1: ArrayList<Int>? = null
 
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
@@ -22,8 +20,7 @@ class ResultFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            param1 = it.getIntegerArrayList(ARG_PARAM1)
         }
     }
 
@@ -32,6 +29,8 @@ class ResultFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
+
+        binding.textView2.text = ResultMaker.getResult(param1!!)
 
         return binding.root
     }
@@ -44,12 +43,9 @@ class ResultFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: ArrayList<Int>) =
             ResultFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+                arguments = bundleOf(ARG_PARAM1 to param1)
             }
     }
 }

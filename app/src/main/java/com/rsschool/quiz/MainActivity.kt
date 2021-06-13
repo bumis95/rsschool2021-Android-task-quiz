@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                replace(R.id.fragmentContainerView, QuizFragment.newInstance(), "f$fragmentCount")
+                replace(R.id.fragmentContainerView, QuizFragment(), "f$fragmentCount")
                 Log.d("QUIZ_FRAGMENT", "page=$fragmentCount")
                 addToBackStack("f$fragmentCount")
             }

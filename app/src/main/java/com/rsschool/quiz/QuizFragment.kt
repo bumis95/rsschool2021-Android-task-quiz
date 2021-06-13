@@ -6,21 +6,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
-private const val ARG_PARAM1 = "param1"
 private const val MAX_QUESTIONS = 5
 
 class QuizFragment : Fragment() {
 
-    private var param1: String? = null
+    var param1: Int = -1
 
     private var listener: OnQuizFragmentListener? = null
-    private lateinit var question: Questions.Question
+    private lateinit var question: Question
 
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
@@ -30,21 +28,11 @@ class QuizFragment : Fragment() {
         listener = context as OnQuizFragmentListener
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("QUIZ_FRAGMENT", "onCreate")
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
-
-        Log.d("QUIZ_FRAGMENT", "onCreateView")
 
         setToolbarTitle()
         initQuestion()
@@ -56,6 +44,23 @@ class QuizFragment : Fragment() {
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.nextButton.isEnabled = true
+            when (checkedId) {
+                binding.optionOne.id -> {
+                    param1 = 0
+                }
+                binding.optionTwo.id -> {
+                    param1 = 1
+                }
+                binding.optionThree.id -> {
+                    param1 = 2
+                }
+                binding.optionFour.id -> {
+                    param1 = 3
+                }
+                binding.optionFive.id -> {
+                    param1 = 4
+                }
+            }
         }
 
         binding.nextButton.setOnClickListener {
@@ -87,7 +92,7 @@ class QuizFragment : Fragment() {
     private fun initQuestion() {
         val page = listener?.getFragmentCount()?.dec()
         if (page != null) {
-            question = Questions.questions[page]
+            question = questions[page]
 
             binding.question.text = question.text
             binding.optionOne.text = question.answers[0]
@@ -118,9 +123,22 @@ class QuizFragment : Fragment() {
             }
         } else {
             if (currentPage == MAX_QUESTIONS) {
-                requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                val list = ArrayList<Int>()
+                for (entry in 1..requireActivity().supportFragmentManager.backStackEntryCount) {
+                    val fragment1 =
+                        requireActivity().supportFragmentManager.findFragmentByTag("f$entry") as QuizFragment
+                    list.add(fragment1.param1)
+                }
+
+                requireActivity().supportFragmentManager.popBackStack(
+                    null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
                 requireActivity().supportFragmentManager.commit {
-                    replace(R.id.fragmentContainerView, ResultFragment())
+                    replace(
+                        R.id.fragmentContainerView,
+                        ResultFragment.newInstance(list)
+                    )
                     addToBackStack("res")
                 }
             } else {
@@ -128,7 +146,7 @@ class QuizFragment : Fragment() {
                 val page = listener?.getFragmentCount()
                 requireActivity().supportFragmentManager.commit {
                     Log.d("QUIZ_FRAGMENT", "page=$page")
-                    replace(R.id.fragmentContainerView, newInstance(), "f$page")
+                    replace(R.id.fragmentContainerView, QuizFragment(), "f$page")
                     addToBackStack("f$page")
                 }
             }
@@ -150,16 +168,5 @@ class QuizFragment : Fragment() {
         fun getFragmentCount(): Int
         fun incFragmentCount()
         fun decFragmentCount()
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() =
-            QuizFragment().apply {
-                arguments = bundleOf(
-                    ARG_PARAM1 to param1,
-                )
-            }
     }
 }
