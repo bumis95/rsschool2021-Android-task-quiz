@@ -2,23 +2,22 @@ package com.rsschool.quiz
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
 private const val MAX_QUESTIONS = 5
 
 class QuizFragment : Fragment() {
 
-    var param1: Int = -1
-
-    private var listener: OnQuizFragmentListener? = null
+    private var selectedAnswer: Int = -1
     private lateinit var question: Question
+    private lateinit var fragment: Fragment
+
+    private lateinit var listener: OnQuizFragmentListener
 
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
@@ -39,26 +38,26 @@ class QuizFragment : Fragment() {
         initButtons()
 
         binding.toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
+            requireActivity().onBackPressed()
         }
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.nextButton.isEnabled = true
             when (checkedId) {
                 binding.optionOne.id -> {
-                    param1 = 0
+                    selectedAnswer = 0
                 }
                 binding.optionTwo.id -> {
-                    param1 = 1
+                    selectedAnswer = 1
                 }
                 binding.optionThree.id -> {
-                    param1 = 2
+                    selectedAnswer = 2
                 }
                 binding.optionFour.id -> {
-                    param1 = 3
+                    selectedAnswer = 3
                 }
                 binding.optionFive.id -> {
-                    param1 = 4
+                    selectedAnswer = 4
                 }
             }
         }
@@ -74,11 +73,6 @@ class QuizFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -86,87 +80,70 @@ class QuizFragment : Fragment() {
 
     private fun setToolbarTitle() {
         binding.toolbar.title =
-            "Question ${listener?.getFragmentCount()}"
+            "Question ${listener.getPage()}"
     }
 
     private fun initQuestion() {
-        val page = listener?.getFragmentCount()?.dec()
-        if (page != null) {
-            question = questions[page]
-
-            binding.question.text = question.text
-            binding.optionOne.text = question.answers[0]
-            binding.optionTwo.text = question.answers[1]
-            binding.optionThree.text = question.answers[2]
-            binding.optionFour.text = question.answers[3]
-            binding.optionFive.text = question.answers[4]
-        }
+        val page = listener.getPage().dec()
+        question = questions[page]
+        binding.question.text = question.text
+        binding.optionOne.text = question.answers[0]
+        binding.optionTwo.text = question.answers[1]
+        binding.optionThree.text = question.answers[2]
+        binding.optionFour.text = question.answers[3]
+        binding.optionFive.text = question.answers[4]
     }
 
     private fun initButtons() {
-        val currentFragment = requireActivity()
+        fragment = requireActivity()
             .supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
-        if (currentFragment.tag == "f$MAX_QUESTIONS")
-            binding.nextButton.text = "Submit"
-        if (currentFragment.tag == "f1")
-            binding.previousButton.isEnabled = false
+        when (fragment.tag) {
+            "f1" -> binding.previousButton.isEnabled = false
+            "f$MAX_QUESTIONS" -> binding.nextButton.text = "Submit"
+        }
     }
 
     private fun goToNext() {
-        val currentPage = listener?.getFragmentCount()
+        val currentPage = listener.getPage()
         val fragment =
-            requireActivity().supportFragmentManager.findFragmentByTag("f${currentPage?.inc()}")
+            requireActivity().supportFragmentManager.findFragmentByTag("f${currentPage.inc()}")
         if (fragment != null) {
-            listener?.incFragmentCount()
-            requireActivity().supportFragmentManager.commit {
-                replace(R.id.fragmentContainerView, fragment)
-            }
+            listener.incPage()
+            listener.showFragment(fragment, false)
         } else {
             if (currentPage == MAX_QUESTIONS) {
                 val list = ArrayList<Int>()
                 for (entry in 1..requireActivity().supportFragmentManager.backStackEntryCount) {
                     val fragment1 =
                         requireActivity().supportFragmentManager.findFragmentByTag("f$entry") as QuizFragment
-                    list.add(fragment1.param1)
+                    list.add(fragment1.selectedAnswer)
                 }
 
                 requireActivity().supportFragmentManager.popBackStack(
                     null,
                     FragmentManager.POP_BACK_STACK_INCLUSIVE
                 )
-                requireActivity().supportFragmentManager.commit {
-                    replace(
-                        R.id.fragmentContainerView,
-                        ResultFragment.newInstance(list)
-                    )
-                    addToBackStack("res")
-                }
+                listener.showFragment(ResultFragment.newInstance(list), false)
             } else {
-                listener?.incFragmentCount()
-                val page = listener?.getFragmentCount()
-                requireActivity().supportFragmentManager.commit {
-                    Log.d("QUIZ_FRAGMENT", "page=$page")
-                    replace(R.id.fragmentContainerView, QuizFragment(), "f$page")
-                    addToBackStack("f$page")
-                }
+                listener.incPage()
+                listener.showFragment(QuizFragment(), true)
             }
         }
     }
 
     private fun goToPrevious() {
-        listener?.decFragmentCount()
-        val page = listener?.getFragmentCount()
+        listener.decPage()
+        val page = listener.getPage()
         val fragment =
             requireActivity().supportFragmentManager.findFragmentByTag("f$page") as QuizFragment
-        requireActivity().supportFragmentManager.commit {
-            Log.d("QUIZ_FRAGMENT", "page=$page")
-            replace(R.id.fragmentContainerView, fragment)
-        }
+        listener.showFragment(fragment, false)
     }
 
     interface OnQuizFragmentListener {
-        fun getFragmentCount(): Int
-        fun incFragmentCount()
-        fun decFragmentCount()
+        fun setPage(page: Int)
+        fun getPage(): Int
+        fun incPage()
+        fun decPage()
+        fun showFragment(fragment: Fragment, isBackStack: Boolean)
     }
 }
