@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rsschool.quiz.databinding.FragmentQuizBinding
@@ -31,7 +32,10 @@ class QuizFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentQuizBinding.inflate(inflater, container, false)
+        val contextThemeWrapper = ContextThemeWrapper(activity, listener.setTheme())
+        val localInflater = inflater.cloneInContext(contextThemeWrapper)
+        requireContext().theme.applyStyle(listener.setTheme(), true)
+        _binding = FragmentQuizBinding.inflate(localInflater, container, false)
 
         setToolbarTitle()
         initQuestion()
@@ -144,6 +148,7 @@ class QuizFragment : Fragment() {
         fun getPage(): Int
         fun incPage()
         fun decPage()
+        fun setTheme(): Int
         fun showFragment(fragment: Fragment, isBackStack: Boolean)
     }
 }
