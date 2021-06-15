@@ -1,6 +1,7 @@
 package com.rsschool.quiz
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,10 +38,18 @@ class ResultFragment : Fragment() {
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
 
-        binding.textView2.text = ResultMaker.getResult(param1!!)
+        binding.textView2.text = ResultMaker.getPercent(param1!!)
 
         binding.ibShare.setOnClickListener {
-
+            val message = ResultMaker.getResult(param1!!)
+            val intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, message)
+                putExtra(Intent.EXTRA_SUBJECT, "Quiz results")
+                type = "text/plain"
+            }
+            val intentChooser = Intent.createChooser(intent, null)
+            startActivity(intentChooser)
         }
 
         binding.ibBack.setOnClickListener {

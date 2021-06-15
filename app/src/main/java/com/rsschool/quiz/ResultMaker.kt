@@ -5,7 +5,7 @@ class ResultMaker {
     companion object {
 
         fun getResult(list: ArrayList<Int>): String = """
-            Your result: ${getPercent(list)}%
+            ${getPercent(list)}
             
             1) ${questions[0].text}
             Your answer: ${questions[0].answers[list[0]]}
@@ -23,7 +23,7 @@ class ResultMaker {
             Your answer: ${questions[4].answers[list[4]]}      
         """.trimIndent()
 
-        private fun getPercent(list: ArrayList<Int>): Int {
+        fun getPercent(list: ArrayList<Int>): String {
             var res = 0f
             list.forEachIndexed { index, answer ->
                 when (answer) {
@@ -32,7 +32,7 @@ class ResultMaker {
                     }
                 }
             }
-            return (res.div(5) * 100).toInt()
+            return "Your result: ${(res.div(5) * 100).toInt()}%"
         }
     }
 }
