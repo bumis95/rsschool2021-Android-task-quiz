@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
         currentPage--
     }
 
-    override fun setTheme(): Int {
+    override fun setFragmentTheme(): Int {
         val id = when (currentPage) {
             1 -> R.color.deep_orange_100_dark
             2 -> R.color.yellow_100_dark

@@ -41,15 +41,7 @@ class ResultFragment : Fragment() {
         binding.textView2.text = ResultMaker.getPercent(param1!!)
 
         binding.ibShare.setOnClickListener {
-            val message = ResultMaker.getResult(param1!!)
-            val intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, message)
-                putExtra(Intent.EXTRA_SUBJECT, "Quiz results")
-                type = "text/plain"
-            }
-            val intentChooser = Intent.createChooser(intent, null)
-            startActivity(intentChooser)
+            sendResult()
         }
 
         binding.ibBack.setOnClickListener {
@@ -67,6 +59,18 @@ class ResultFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun sendResult() {
+        val message = ResultMaker.getResult(param1!!)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, message)
+            putExtra(Intent.EXTRA_SUBJECT, "Quiz results")
+            type = "text/plain"
+        }
+        val intentChooser = Intent.createChooser(intent, null)
+        startActivity(intentChooser)
     }
 
     companion object {
