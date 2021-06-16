@@ -10,11 +10,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.rsschool.quiz.databinding.FragmentResultBinding
 
-private const val ARG_PARAM1 = "param1"
+private const val ARG_RESULT = "ARG_RESULT"
 
 class ResultFragment : Fragment() {
 
-    private var param1: ArrayList<Int>? = null
+    private var list: ArrayList<Int> = arrayListOf()
     private lateinit var listener: QuizFragment.OnQuizFragmentListener
 
     private var _binding: FragmentResultBinding? = null
@@ -28,7 +28,7 @@ class ResultFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getIntegerArrayList(ARG_PARAM1)
+            list = it.getIntegerArrayList(ARG_RESULT) as ArrayList<Int>
         }
     }
 
@@ -38,7 +38,7 @@ class ResultFragment : Fragment() {
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
 
-        binding.textView2.text = ResultMaker.getPercent(param1!!)
+        binding.tvResult.text = ResultMaker.getPercent(list)
 
         binding.ibShare.setOnClickListener {
             sendResult()
@@ -62,7 +62,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun sendResult() {
-        val message = ResultMaker.getResult(param1!!)
+        val message = ResultMaker.getResult(list)
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, message)
@@ -78,7 +78,7 @@ class ResultFragment : Fragment() {
         @JvmStatic
         fun newInstance(param1: ArrayList<Int>) =
             ResultFragment().apply {
-                arguments = bundleOf(ARG_PARAM1 to param1)
+                arguments = bundleOf(ARG_RESULT to param1)
             }
     }
 }
