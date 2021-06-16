@@ -105,7 +105,10 @@ class QuizFragment : Fragment() {
     private fun initButtons() {
         fragment = fragManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
         when (fragment.tag) {
-            "f1" -> binding.previousButton.isEnabled = false
+            "f1" -> {
+                binding.previousButton.isEnabled = false
+                binding.toolbar.navigationIcon = null
+            }
             "f$MAX_QUESTIONS" -> binding.nextButton.text = "Submit"
         }
     }
