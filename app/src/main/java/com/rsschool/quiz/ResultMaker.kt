@@ -8,19 +8,19 @@ class ResultMaker {
             ${getPercent(list)}
             
             1) ${questions[0].text}
-            Your answer: ${questions[0].answers[list[0]]}
+            Твой ответ: ${questions[0].answers[list[0]]}
             
             2) ${questions[1].text}
-            Your answer: ${questions[1].answers[list[1]]}
+            Твой ответ: ${questions[1].answers[list[1]]}
             
             3) ${questions[2].text}
-            Your answer: ${questions[2].answers[list[2]]}
+            Твой ответ: ${questions[2].answers[list[2]]}
                         
             4) ${questions[3].text}
-            Your answer: ${questions[3].answers[list[3]]}
+            Твой ответ: ${questions[3].answers[list[3]]}
             
             5) ${questions[4].text}
-            Your answer: ${questions[4].answers[list[4]]}      
+            Твой ответ: ${questions[4].answers[list[4]]}      
         """.trimIndent()
 
         fun getPercent(list: ArrayList<Int>): String {
@@ -30,7 +30,7 @@ class ResultMaker {
                     questions[index].correct -> res++
                 }
             }
-            return "Your result: ${(res.div(5) * 100).toInt()}%"
+            return "Твой результат: ${(res.div(5) * 100).toInt()}%"
         }
     }
 }

@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.rsschool.quiz.ResultFragment.Companion.MAX_QUESTIONS
 import com.rsschool.quiz.databinding.FragmentQuizBinding
-
-private const val MAX_QUESTIONS = 5
 
 class QuizFragment : Fragment() {
 
@@ -98,7 +97,7 @@ class QuizFragment : Fragment() {
                 binding.previousButton.isEnabled = false
                 binding.toolbar.navigationIcon = null
             }
-            "f$MAX_QUESTIONS" -> binding.nextButton.text = "Submit"
+            "f$MAX_QUESTIONS" -> binding.nextButton.text = getString(R.string.submit)
         }
     }
 

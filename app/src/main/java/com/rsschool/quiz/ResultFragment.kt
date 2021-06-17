@@ -10,8 +10,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.rsschool.quiz.databinding.FragmentResultBinding
 
-private const val ARG_RESULT = "ARG_RESULT"
-
 class ResultFragment : Fragment() {
 
     private var list: ArrayList<Int> = arrayListOf()
@@ -66,14 +64,18 @@ class ResultFragment : Fragment() {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, message)
-            putExtra(Intent.EXTRA_SUBJECT, "Quiz results")
-            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.quiz_results))
+            type = INTENT_TYPE
         }
         val intentChooser = Intent.createChooser(intent, null)
         startActivity(intentChooser)
     }
 
     companion object {
+
+        const val MAX_QUESTIONS = 5
+        private const val ARG_RESULT = "ARG_RESULT"
+        private const val INTENT_TYPE = "text/plain"
 
         @JvmStatic
         fun newInstance(param1: ArrayList<Int>) =
