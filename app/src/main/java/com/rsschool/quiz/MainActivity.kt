@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
         val id = when (currentPage) {
             1 -> R.color.deep_orange_100_dark
             2 -> R.color.yellow_100_dark
-            3 -> R.color.yellow_100_dark
-            4 -> R.color.yellow_100_dark
-            else -> R.color.yellow_100_dark
+            3 -> R.color.cyan_100_dark
+            4 -> R.color.light_green_100_dark
+            else -> R.color.deep_purple_100_dark
         }
         window.statusBarColor = ContextCompat.getColor(applicationContext, id)
         return when (currentPage) {
