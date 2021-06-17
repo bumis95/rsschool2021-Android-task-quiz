@@ -48,21 +48,11 @@ class QuizFragment : Fragment() {
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.nextButton.isEnabled = true
             when (checkedId) {
-                binding.optionOne.id -> {
-                    selectedAnswer = 0
-                }
-                binding.optionTwo.id -> {
-                    selectedAnswer = 1
-                }
-                binding.optionThree.id -> {
-                    selectedAnswer = 2
-                }
-                binding.optionFour.id -> {
-                    selectedAnswer = 3
-                }
-                binding.optionFive.id -> {
-                    selectedAnswer = 4
-                }
+                binding.optionOne.id -> selectedAnswer = 0
+                binding.optionTwo.id -> selectedAnswer = 1
+                binding.optionThree.id -> selectedAnswer = 2
+                binding.optionFour.id -> selectedAnswer = 3
+                binding.optionFive.id -> selectedAnswer = 4
             }
         }
 

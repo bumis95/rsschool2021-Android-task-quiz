@@ -27,9 +27,7 @@ class ResultMaker {
             var res = 0f
             list.forEachIndexed { index, answer ->
                 when (answer) {
-                    questions[index].correct -> {
-                        res++
-                    }
+                    questions[index].correct -> res++
                 }
             }
             return "Your result: ${(res.div(5) * 100).toInt()}%"

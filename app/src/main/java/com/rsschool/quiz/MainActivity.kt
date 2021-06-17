@@ -28,12 +28,8 @@ class MainActivity : AppCompatActivity(), QuizFragment.OnQuizFragmentListener {
             val fragment =
                 supportFragmentManager.findFragmentByTag("f$currentPage")
             when (fragment) {
-                is QuizFragment -> {
-                    showFragment(fragment, false)
-                }
-                else -> {
-                    finish()
-                }
+                is QuizFragment -> showFragment(fragment, false)
+                else -> finish()
             }
         }
     }
