@@ -15,7 +15,6 @@ class QuizFragment : Fragment() {
 
     private var selectedAnswer: Int = -1
     private lateinit var question: Question
-    private lateinit var fragment: Fragment
     private lateinit var fragManager: FragmentManager
     private lateinit var listener: OnQuizFragmentListener
 
@@ -93,7 +92,7 @@ class QuizFragment : Fragment() {
     }
 
     private fun initButtons() {
-        fragment = fragManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
+        val fragment = fragManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
         when (fragment.tag) {
             "f1" -> {
                 binding.previousButton.isEnabled = false
@@ -105,19 +104,19 @@ class QuizFragment : Fragment() {
 
     private fun goToNext() {
         val currentPage = listener.getPage()
-        var fragment = fragManager.findFragmentByTag("f${currentPage.inc()}")
-        if (fragment != null) {
-            listener.incPage()
-            listener.showFragment(fragment, false)
+        if (currentPage == MAX_QUESTIONS) {
+            val list = ArrayList<Int>()
+            for (entry in 1..fragManager.backStackEntryCount) {
+                val fragment = fragManager.findFragmentByTag("f$entry") as QuizFragment
+                list.add(fragment.selectedAnswer)
+            }
+            fragManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            listener.showFragment(ResultFragment.newInstance(list), false)
         } else {
-            if (currentPage == MAX_QUESTIONS) {
-                val list = ArrayList<Int>()
-                for (entry in 1..fragManager.backStackEntryCount) {
-                    fragment = fragManager.findFragmentByTag("f$entry") as QuizFragment
-                    list.add(fragment.selectedAnswer)
-                }
-                fragManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                listener.showFragment(ResultFragment.newInstance(list), false)
+            val fragment = fragManager.findFragmentByTag("f${currentPage.inc()}")
+            if (fragment != null) {
+                listener.incPage()
+                listener.showFragment(fragment, false)
             } else {
                 listener.incPage()
                 listener.showFragment(QuizFragment(), true)
@@ -126,10 +125,7 @@ class QuizFragment : Fragment() {
     }
 
     private fun goToPrevious() {
-        listener.decPage()
-        val page = listener.getPage()
-        fragment = fragManager.findFragmentByTag("f$page") as QuizFragment
-        listener.showFragment(fragment, false)
+        requireActivity().onBackPressed()
     }
 
     interface OnQuizFragmentListener {
