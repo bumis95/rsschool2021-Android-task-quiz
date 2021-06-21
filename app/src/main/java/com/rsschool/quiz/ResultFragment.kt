@@ -78,9 +78,9 @@ class ResultFragment : Fragment() {
         private const val INTENT_TYPE = "text/plain"
 
         @JvmStatic
-        fun newInstance(param1: ArrayList<Int>) =
+        fun newInstance(list: ArrayList<Int>) =
             ResultFragment().apply {
-                arguments = bundleOf(ARG_RESULT to param1)
+                arguments = bundleOf(ARG_RESULT to list)
             }
     }
 }

@@ -6,15 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.rsschool.quiz.ResultFragment.Companion.MAX_QUESTIONS
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
 class QuizFragment : Fragment() {
 
-    private var selectedAnswer: Int = -1
+    var selectedAnswer: Int = -1
     private lateinit var question: Question
-    private lateinit var fragManager: FragmentManager
     private lateinit var listener: OnQuizFragmentListener
 
     private var _binding: FragmentQuizBinding? = null
@@ -23,7 +21,6 @@ class QuizFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = context as OnQuizFragmentListener
-        fragManager = (activity as MainActivity).supportFragmentManager
     }
 
     override fun onCreateView(
@@ -32,9 +29,7 @@ class QuizFragment : Fragment() {
     ): View {
 
         initFragmentTheme()
-
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
-
         setToolbarTitle()
         initQuestion()
         initButtons()
@@ -55,11 +50,11 @@ class QuizFragment : Fragment() {
         }
 
         binding.nextButton.setOnClickListener {
-            goToNext()
+            listener.nextPage()
         }
 
         binding.previousButton.setOnClickListener {
-            goToPrevious()
+            requireActivity().onBackPressed()
         }
 
         return binding.root
@@ -71,7 +66,7 @@ class QuizFragment : Fragment() {
     }
 
     private fun initFragmentTheme() {
-        requireContext().theme.applyStyle(listener.setFragmentTheme(), true)
+        listener.setFragmentTheme()
     }
 
     private fun setToolbarTitle() {
@@ -91,7 +86,8 @@ class QuizFragment : Fragment() {
     }
 
     private fun initButtons() {
-        val fragment = fragManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
+        val fragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as QuizFragment
         when (fragment.tag) {
             "f1" -> {
                 binding.previousButton.isEnabled = false
@@ -101,38 +97,11 @@ class QuizFragment : Fragment() {
         }
     }
 
-    private fun goToNext() {
-        val currentPage = listener.getPage()
-        if (currentPage == MAX_QUESTIONS) {
-            val list = ArrayList<Int>()
-            for (entry in 1..fragManager.backStackEntryCount) {
-                val fragment = fragManager.findFragmentByTag("f$entry") as QuizFragment
-                list.add(fragment.selectedAnswer)
-            }
-            fragManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-            listener.showFragment(ResultFragment.newInstance(list), false)
-        } else {
-            val fragment = fragManager.findFragmentByTag("f${currentPage.inc()}")
-            if (fragment != null) {
-                listener.incPage()
-                listener.showFragment(fragment, false)
-            } else {
-                listener.incPage()
-                listener.showFragment(QuizFragment(), true)
-            }
-        }
-    }
-
-    private fun goToPrevious() {
-        requireActivity().onBackPressed()
-    }
-
     interface OnQuizFragmentListener {
         fun setPage(page: Int)
         fun getPage(): Int
-        fun incPage()
-        fun decPage()
-        fun setFragmentTheme(): Int
+        fun setFragmentTheme()
         fun showFragment(fragment: Fragment, isBackStack: Boolean)
+        fun nextPage()
     }
 }
